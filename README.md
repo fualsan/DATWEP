@@ -5,7 +5,7 @@ Source code for the **Dynamic Task and Weight Prioritization Curriculum Learning
 Create a new Python environment
 
 ```console
-$ conda create -n datwep python=3.10 -y
+$ conda create -n datwep python=3.11 -y
 ```
 Activate created environment
 
@@ -19,28 +19,27 @@ $ pip install -r requirements.txt
 ```
 
 
-## Dataset
+## Downloading & Preparing dataset
 Download the FloodNet dataset from below (Both Track 1 and 2):
 * https://github.com/BinaLab/FloodNet-Challenge-EARTHVISION2021
 
-## Arrange the downloaded data files
-Data directory should have the following structure:
-
-#### Segmentation (Track 1)
-* **FloodNet/track1_seg/train-label-img/** 
-    * (Segmentation Masks)
-
-#### Visual Question Answering (VQA) (Track 2)
-* **FloodNet/track2_vqa/Images/**
-    *  (VQA images, also used in segmentation) 
-
-* **FloodNet/track2_vqa/Questions/** 
-    * (VQA questions)
-
-If you prefer another directory, then you should set the **DATA_ROOT** in Training.ipynb notebook.
+1. Download track 1 & 2 from https://github.com/BinaLab/FloodNet-Challenge-EARTHVISION2021
+2. Extract “Images” and “Questions” folders from track 2 files
+3. Extract training images from track 1 files. Since validation and test images don’t have annotations, we are going to ignore them.
+4. In “labeled” folder, combine mask folders from “Flooded” and “Non-Flooded” folders in a new directory. 
+5. Create three new directories and move files: 
+    1. “track2_vqa/Images/” move “Images” folder from track 2 files
+    2. “track2_vqa/Questions/” move “Questions” folder from track 2 files
+    3. “track1_seg/train-label-img” move combined mask files here (mask folders from “Flooded” and “Non-Flooded” folders)
+6. If your prefer other directories, please modify the directories in hyperparameters dictionary:
+    1. hyperparameters['DATASET']['IMAGES_ROOT']
+    2. hyperparameters['DATASET']['QUESTIONS_ROOT']
+    3. hyperparameters['DATASET']['MASK_IMAGES_PATH']
+7. Note: We only use the “Train_Image” folder of the “Images” of track 2. This is automatically set.
+8. If you prefer another directory, then you should set the **DATA_ROOT** in Training.ipynb notebook.
 
 ```python
-hyperparameters['DATASET']['DATA_ROOT'] = '../../data/'
+hyperparameters['DATASET']['DATA_ROOT']
 ```
 
 ## Experiments
