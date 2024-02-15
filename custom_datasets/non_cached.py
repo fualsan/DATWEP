@@ -80,19 +80,25 @@ class FloodnetDataset():
         # TODO: Maybe replace this with a read function from numpy
         image_raw = Image.open(image_full_path).convert('RGB')
         try:
+            # MAYBE REPLACE mask_raw = Image.open(mask_full_path).convert('P') WITH NUMPY
+            # convert() FUNCTION MAY WORK UNEXPECTED
             mask_raw = Image.open(mask_full_path).convert('P')
             _mask = np.array(mask_raw)
             mask_nan = False
         except:
             #print(f'Mask error at: {idx}')
             mask_nan = True
-            _mask = np.zeros(shape=(image_raw.height, image_raw.width), dtype=np.uint8)
+            #_mask = np.zeros(shape=(image_raw.height, image_raw.width), dtype=np.uint8)
+            # RETURN -1 FOR NaN MASK VALUES
+            _mask = (-1) * np.ones(shape=(image_raw.height, image_raw.width), dtype=np.float32)
         
         _image = np.array(image_raw)
 
+        ### THIS PART IS NOT NECESSARY FOR MSE SEG MASKS ###
         all_masks = []
         for mask_id in range(self.num_segmentation_classes):
             all_masks.append(np.array(_mask==mask_id, dtype=np.uint8)*255)
+        ####################################################
 
         transformed = self.img_transforms(image=_image, masks=all_masks)
         transformed_image = transformed['image']
@@ -103,7 +109,9 @@ class FloodnetDataset():
 
         # Normalize
         image = transformed_image/255.0
+        ### THIS PART IS NOT NECESSARY FOR MSE SEG MASKS ###
         masks = transformed_masks_stacked/255.0
+        ####################################################
 
         image = image.transpose(2, 0, 1)
         
